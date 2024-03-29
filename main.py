@@ -15,44 +15,25 @@ conversational_memory = ConversationBufferWindowMemory(
     return_messages=True
 )
 
+
 @tool
 def when_was_zup_founded():
-    """When was Zup founded?"""
+    """Tells the date Zup was founded"""
     return "Zup was founded in 2011."
+
 
 @tool
 def calculate_square_root(x: int) -> float:
-    """Calculate the square root of a number"""
+    """Calculates the square root of a number"""
     return x**0.5
 
-class TestModel(BaseModel):
-    """Answers when Zup was founded"""
-    query: str = Field(description="The query to answer")
-
-def answer_query(self, query: str) -> str:
-    return {"response": "Zup was founded in 2011."}
-
-
-get_zup_query_tool = Tool(
-    name="get_zup_query",
-    func=answer_query,
-    description="Answers when Zup was founded",
-    args_schema=TestModel
-)
 
 def main():
-    
-    # chain = prompt | model
-    # result = chain.invoke({"input": "When was Zup founded?"})
     tools = [when_was_zup_founded, calculate_square_root]
-    # tools = [get_zup_query_tool]
-    # prompt = ChatPromptTemplate.from_template(
-    #     "[INS]You're an expert in the tech field. Anser the question: {input}[/INS] \n{agent_scratchpad}", tools=tools
-    # )
     prompt = hub.pull("hwchase17/structured-chat-agent")
     agent = create_structured_chat_agent(llm=model, tools=tools, prompt=prompt)
     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-    result = agent_executor.invoke({"input": "What's the square root of 25"})
+    result = agent_executor.invoke({"input": "When was Zup founded?"})
     print(result)
 
 if __name__ == "__main__":
